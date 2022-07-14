@@ -29,6 +29,14 @@ const SiswaPost = new Schema({
   no_HP: {
     type: String,
     required: true
+  },
+  foto: {
+    type: String,
+    required: true
+  },
+  doc: {
+    type: Object,
+    required: true
   }
 }, {
   timestamps: true

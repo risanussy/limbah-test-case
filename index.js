@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 
@@ -8,8 +10,31 @@ const port = 4000;
 const siswaRoutes =   require('./src/routes/siswa');
 const authRoutes =   require('./src/routes/auth');
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().getTime()+'-'+file.originalname)
+  }
+})
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg' 
+  ){
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
 // fungsi body parser adalah mengubah req ke json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(multer({storage: fileStorage, fileFilter}).single('foto'));
 
 // untuk menangani privacy police di browser
 app.use((req, res, next) => {
